@@ -54,25 +54,26 @@ function LintReporter() {
       var file = { path: fileName, errors: 0, warnings: 0, messages: [], errorList: [] };
 
       teamCityLogger.testStart(fileName);
-
-      for (var x = 0; x < messages.length; x++) {
-        var message = messages[x];
-
-        hairballs.updateAlertSummary(message);
-        file = this.summarizeFile(file, message);
-      }
-
-      if (file.errorList.length) {
-        teamCityLogger.testFailed(fileName, file.errorList);
-      }
-
-      teamCityLogger.testEnd(fileName);
-      hairballs.updateFileSummary(file);
-
-      // remove messages so that handlebars doesn't print links in the report
-      // @todo get rid of handlebars
-      if (!this.fullReport) {
-        file.messages = null;
+      if (messages.length !== 0 && messages[0].message.indexOf("eslintignore") === -1) {
+        for (var x = 0; x < messages.length; x++) {
+          var message = messages[x];
+  
+          hairballs.updateAlertSummary(message);
+          file = this.summarizeFile(file, message);
+        }
+  
+        if (file.errorList.length) {
+          teamCityLogger.testFailed(fileName, file.errorList);
+        }
+  
+        teamCityLogger.testEnd(fileName);
+        hairballs.updateFileSummary(file);
+  
+        // remove messages so that handlebars doesn't print links in the report
+        // @todo get rid of handlebars
+        if (!this.fullReport) {
+          file.messages = null;
+        }
       }
     }
 
